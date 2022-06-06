@@ -1,6 +1,6 @@
 version = "1.9.1"
 configVersion = "1.8.0"
-print(f"Fortnite Save the World Claimer v{version} by PRO100KatYT\n")
+print(f"Fortnite Save the World Claimer v{version} by PRO100KatYT and Salty-Coder\n")
 try:
     import json
     import requests
