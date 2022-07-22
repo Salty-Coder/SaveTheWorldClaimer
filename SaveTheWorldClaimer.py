@@ -200,6 +200,8 @@ def startup():
                     input("Press ENTER to continue.\n")
                 else: break
 
+os.system("cls")
+
 # The main part of the program that can be looped.
 def main():
     for account in authJson:
