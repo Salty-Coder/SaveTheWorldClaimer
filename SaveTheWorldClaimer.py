@@ -103,7 +103,7 @@ def webhook(url, string): # Sending Discord webhooks :) | Salty-Coder
         return True
 
 # Create and/or read the config.ini file.
-config, configPath = [ConfigParser(), os.path.join(os.path.split(os.path.abspath(__file__))[0], "config.ini")]
+config, configPath = [ConfigParser(), os.path.join(os.path.split(os.path.abspath(__file__))[0], "data/config.ini")]
 langValues, boolValues = [["ar", "de", "en", "es", "es-419", "fr", "it", "ja", "ko", "pl", "pt-BR", "ru", "tr", "zh-CN", "zh-Hant"], ["true", "false"]]
 if not os.path.exists(configPath):
     print("Starting to generate the config.ini file.\n") # Don't want to initiate message() before bShowDateTime exists... - Salty-Coder
