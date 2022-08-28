@@ -11,6 +11,7 @@ try:
     from datetime import datetime, timedelta
     import webbrowser
     import time
+    import sys
 except Exception as emsg:
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'requests'])
     subprocess.call([sys.executable, os.path.realpath(__file__)] + sys.argv[1:])
@@ -82,12 +83,14 @@ def reqTokenText(loginLink, altLoginLink, authHeader):
     return reqToken
 
 # Print a message with or without the date and time.
-def message(string):
+def message(string, WHtype="full"):
     if bShowDateTime == "true":
         string = string.replace("\n", "\n"+" "*((len(getDateTimeString()))+1))
         string = f"{getDateTimeString()} {string}"
+    print(string)
     if bDiscordWebhookURL: # Check for Discord webhook
-        webhook(bDiscordWebhookURL, string) # Send the webhook
+        if WHtype == "full" and bDiscordWebhookType == "full":
+            webhook(bDiscordWebhookURL, string) # Send the webhook
 
 def webhook(url, string): # Sending Discord webhooks :) | Salty-Coder
     data = {
@@ -125,12 +128,15 @@ if not os.path.exists(configPath):
         iDiscord_Webhook_URL = ""
         if iDiscord_Webhook == "true":
             iDiscord_Webhook_URL = validInput("Discord webhook URL:", "url")
-    else: iLanguage, iSpend_Research_Points, iOpen_Free_Llamas, iRecycle_Weapons, iRecycle_Traps, iRetire_Survivors, iRetire_Defenders, iRetire_Heroes, iLoop_Time, iShow_Date_Time, iDiscord_Webhook, iDiscord_Webhook_URL = ["en", "lowest", "true", "uncommon", "uncommon", "rare", "rare", "uncommon", 0, "false", "false", ""]           
-    with open(configPath, "w") as configFile: configFile.write(f"[StW_Claimer_Config]\n\n# What language do you want the Fortnite item names to be?\n# Valid vaules: ar, de, en, es, es-419, fr, it, ja, ko, pl, pt-BR, ru, tr, zh-CN, zh-Hant.\nLanguage = {iLanguage}\n\n# Do you want to automatically spend your Research Points whenever the program is unable to collect them because of their max accumulation?\n# The \"lowest\" method makes the program search for a Research stat with the lowest level.\n# The \"everyten\" method makes the program search for the closest Research stat to a full decimal level, e.g. level 10, 20, 40, etc.\n# Valid vaules: off, lowest, everyten.\nSpend_Research_Points = {iSpend_Research_Points}\n\n# Do you want the program to search for free Llamas and open them if they are avaiable?\n# Valid vaules: true, false.\nOpen_Free_Llamas = {iOpen_Free_Llamas}\n\n[Automatic_Recycle/Retire]\n\n# Automatically recycle Weapon schematics at this rarity or below.\n# Valid values: off, common, uncommon, rare, epic.\nRecycle_Weapons = {iRecycle_Weapons}\n\n# Automatically recycle Trap schematics at this rarity or below.\n# Valid values: off, common, uncommon, rare, epic.\nRecycle_Traps = {iRecycle_Traps}\n\n# Automatically retire Survivors at this rarity or below.\n# Valid values: off, common, uncommon, rare, epic.\nRetire_Survivors = {iRetire_Survivors}\n\n# Automatically retire Defenders at this rarity or below.\n# Valid values: off, common, uncommon, rare, epic.\nRetire_Defenders = {iRetire_Defenders}\n\n# Automatically retire Heroes at this rarity or below.\n# Valid values: off, common, uncommon, rare, epic.\nRetire_Heroes = {iRetire_Heroes}\n\n[Loop]\n\n# Do you want the progam to loop itself every X minutes?\n# Set this to 0 to not loop the program.\n# Valid values: a number (1, 15, 60, etc.).\nLoop_Minutes = {iLoop_Time}\n\n[Misc]\n\n# Do you want the program to show the date and time when sending messages?\n# Valid vaules: true, false.\nShow_Date_Time = {iShow_Date_Time}\n\n# Do you want the program to post output to a Discord webhook?\nDiscord_Webhook_URL = {iDiscord_Webhook_URL}\n\n[Config_Version]\n\nVersion = STWC_{configVersion}")
+            iDiscord_Webhook_Type = validInput("Type 1 for all logging\nType 2 for error logging.", ["1", "2"])
+            if iDiscord_Webhook_Type == "1": iDiscord_Webhook_Type = "full"
+            elif iDiscord_Webhook_Type == "2": iDiscord_Webhook_Type = "error"
+    else: iLanguage, iSpend_Research_Points, iOpen_Free_Llamas, iRecycle_Weapons, iRecycle_Traps, iRetire_Survivors, iRetire_Defenders, iRetire_Heroes, iLoop_Time, iShow_Date_Time, iDiscord_Webhook, iDiscord_Webhook_URL, iDiscord_Webhook_Type = ["en", "lowest", "true", "uncommon", "uncommon", "rare", "rare", "uncommon", 0, "false", "false", "", "full"]           
+    with open(configPath, "w") as configFile: configFile.write(f"[StW_Claimer_Config]\n\n# What language do you want the Fortnite item names to be?\n# Valid vaules: ar, de, en, es, es-419, fr, it, ja, ko, pl, pt-BR, ru, tr, zh-CN, zh-Hant.\nLanguage = {iLanguage}\n\n# Do you want to automatically spend your Research Points whenever the program is unable to collect them because of their max accumulation?\n# The \"lowest\" method makes the program search for a Research stat with the lowest level.\n# The \"everyten\" method makes the program search for the closest Research stat to a full decimal level, e.g. level 10, 20, 40, etc.\n# Valid vaules: off, lowest, everyten.\nSpend_Research_Points = {iSpend_Research_Points}\n\n# Do you want the program to search for free Llamas and open them if they are avaiable?\n# Valid vaules: true, false.\nOpen_Free_Llamas = {iOpen_Free_Llamas}\n\n[Automatic_Recycle/Retire]\n\n# Automatically recycle Weapon schematics at this rarity or below.\n# Valid values: off, common, uncommon, rare, epic.\nRecycle_Weapons = {iRecycle_Weapons}\n\n# Automatically recycle Trap schematics at this rarity or below.\n# Valid values: off, common, uncommon, rare, epic.\nRecycle_Traps = {iRecycle_Traps}\n\n# Automatically retire Survivors at this rarity or below.\n# Valid values: off, common, uncommon, rare, epic.\nRetire_Survivors = {iRetire_Survivors}\n\n# Automatically retire Defenders at this rarity or below.\n# Valid values: off, common, uncommon, rare, epic.\nRetire_Defenders = {iRetire_Defenders}\n\n# Automatically retire Heroes at this rarity or below.\n# Valid values: off, common, uncommon, rare, epic.\nRetire_Heroes = {iRetire_Heroes}\n\n[Loop]\n\n# Do you want the progam to loop itself every X minutes?\n# Set this to 0 to not loop the program.\n# Valid values: a number (1, 15, 60, etc.).\nLoop_Minutes = {iLoop_Time}\n\n[Misc]\n\n# Do you want the program to show the date and time when sending messages?\n# Valid vaules: true, false.\nShow_Date_Time = {iShow_Date_Time}\n\n# Do you want the program to post output to a Discord webhook?\nDiscord_Webhook_URL = {iDiscord_Webhook_URL}\nDiscord_Webhook_Type = {iDiscord_Webhook_Type}\n\n[Config_Version]\n\nVersion = STWC_{configVersion}")
     print("The config.ini file was generated successfully.\n")
 try:
     config.read(configPath)
-    configVer, lang, spendAutoResearch, bOpenFreeLlamas, loopMinutes, bShowDateTime, bDiscordWebhookURL = [config['Config_Version']['Version'], config['StW_Claimer_Config']['Language'].lower(), config['StW_Claimer_Config']['Spend_Research_Points'].lower(), config['StW_Claimer_Config']['Open_Free_Llamas'].lower(), config['Loop']['Loop_Minutes'], config['Misc']['Show_Date_Time'].lower(), config['Misc']['Discord_Webhook_URL']]
+    configVer, lang, spendAutoResearch, bOpenFreeLlamas, loopMinutes, bShowDateTime, bDiscordWebhookURL, bDiscordWebhookType = [config['Config_Version']['Version'], config['StW_Claimer_Config']['Language'].lower(), config['StW_Claimer_Config']['Spend_Research_Points'].lower(), config['StW_Claimer_Config']['Open_Free_Llamas'].lower(), config['Loop']['Loop_Minutes'], config['Misc']['Show_Date_Time'].lower(), config['Misc']['Discord_Webhook_URL'], config['Misc']['Discord_Webhook_Type']]
     autoRecycling.itemRarities = {"weapon": autoRecycling.rarities[config['Automatic_Recycle/Retire']['Recycle_Weapons'].lower()].split(", "), "trap": autoRecycling.rarities[config['Automatic_Recycle/Retire']['Recycle_Traps'].lower()].split(", "), "survivor": autoRecycling.rarities[config['Automatic_Recycle/Retire']['Retire_Survivors'].lower()].split(", "), "defender": autoRecycling.rarities[config['Automatic_Recycle/Retire']['Retire_Defenders'].lower()].split(", "), "hero": autoRecycling.rarities[config['Automatic_Recycle/Retire']['Retire_Heroes'].lower()].split(", ")}
 except: customError("The program is unable to read the config.ini file. Delete the config.ini file and run this program again to generate a new one.")
 if not (configVer == f"STWC_{configVersion}"): customError("The config file is outdated. Delete the config.ini file and run this program again to generate a new one.")
@@ -149,7 +155,7 @@ try:
 except: configError("Loop_Minutes", loopMinutes, "a number (1, 15, 60, etc.)")
 
 # Load the stringlist.json file and create and load the auth.json file.
-stringListPath, authPath = [os.path.join(os.path.split(os.path.abspath(__file__))[0], "stringlist.json"), os.path.join(os.path.split(os.path.abspath(__file__))[0], "auth.json")]
+stringListPath, authPath = [os.path.join(os.path.split(os.path.abspath(__file__))[0], "stringlist.json"), os.path.join(os.path.split(os.path.abspath(__file__))[0], "data/auth.json")]
 if not os.path.exists(stringListPath): customError("The stringlist.json file doesn't exist. Get it from this program's repository on Github (https://github.com/PRO100KatYT/SaveTheWorldClaimer), add it back and run this program again.")
 try: stringList = json.loads(open(stringListPath, "r", encoding = "utf-8").read())
 except: customError("The program is unable to read the stringlist.json file. Delete the stringlist.json file, download it from this program's repository on Github (https://github.com/PRO100KatYT/SaveTheWorldClaimer), add it back here and run this program again.")
@@ -210,8 +216,11 @@ def startup():
 
     while True:
         if not authJson: addAccount(False)
-        bStartClaimer = validInput("Main menu:\nType 1 if you want to start this program and press ENTER.\nType 2 if you want to go the Account Manager and press ENTER.", ["1", "2"])
-        if bStartClaimer == "1": break
+        try:
+             bStartClaimer = False if sys.argv[1]=='--account' else True
+        except IndexError:
+            bStartClaimer = True
+        if bStartClaimer: break
         else:
             while True:
                 whatToDo = validInput("Account Manager:\nType 1 if you want to add an account to this program and press ENTER.\nType 2 if you want to remove an account from this program and press ENTER.\nType 3 if you want to see the list of accounts added to this program and press ENTER.\nType 4 to go back and press ENTER.", ["1", "2", "3", "4"])
@@ -222,7 +231,7 @@ def startup():
                     input("Press ENTER to continue.\n")
                 else: break
 
-os.system("cls")
+#os.system("cls")
 
 # The main part of the program that can be looped.
 def main():
@@ -234,7 +243,14 @@ def main():
             except: displayName = "(unknown display name)"
             if authType == "token":
                 expirationDate, refreshToken = [account["refresh_expires_at"], account["refreshToken"]]
-                if expirationDate < datetime.now().isoformat(): customError(f"The refresh token has expired. To fix this issue, remove {displayName} from the account list and add this account back. If this problem persists try to log in using the device auth type.")
+                if expirationDate < datetime.now().isoformat():
+                    if bDiscordWebhookURL:
+                        try:
+                            msg = f"The refresh token has expired. To fix this issue, remove {displayName} from the account list and add this account back. If this problem persists try to log in using the device auth type."
+                            webhook(bDiscordWebhookURL, msg)
+                        except:
+                            print("Error sending Discord Webhook! Maybe invalid URL?")
+                    customError(f"The refresh token has expired. To fix this issue, remove {displayName} from the account list and add this account back. If this problem persists try to log in using the device auth type.")
             if authType == "device":
                 deviceId, secret = [account["deviceId"], account["secret"]]
         except:
@@ -244,7 +260,11 @@ def main():
         message(f"Logging in as {displayName}...")
         if authType == "token": # Shoutout to BayGamerYT for telling me about this login method.
             reqRefreshToken = requestText(session.post(links.getOAuth.format("token"), headers={"Authorization": "basic MzRhMDJjZjhmNDQxNGUyOWIxNTkyMTg3NmRhMzZmOWE6ZGFhZmJjY2M3Mzc3NDUwMzlkZmZlNTNkOTRmYzc2Y2Y="}, data={"grant_type": "refresh_token", "refresh_token": refreshToken}), False)
-            if "errorMessage" in reqRefreshToken: customError(f"{reqRefreshToken['errorMessage']}. To fix this issue, remove {displayName} from the account list and add this account back. If this problem persists try to log in using the device auth type.")
+            if "errorMessage" in reqRefreshToken:
+                if bDiscordWebhookURL:
+                    webhook(bDiscordWebhookURL, f"{reqRefreshToken['errorMessage']}. To fix this issue, remove {displayName} from the account list and add this account back. If this problem persists try to log in using the device auth type.")
+                customError(f"{reqRefreshToken['errorMessage']}. To fix this issue, remove {displayName} from the account list and add this account back. If this problem persists try to log in using the device auth type.")
+                
             account['refreshToken'], account['refresh_expires_at'] = [reqRefreshToken["refresh_token"], reqRefreshToken["refresh_expires_at"]]
             with open(authPath, "w", encoding = "utf-8") as saveAuthFile: json.dump(authJson, saveAuthFile, indent = 2, ensure_ascii = False)
             reqExchange = requestText(session.get(links.getOAuth.format("exchange"), headers={"Authorization": f"bearer {reqRefreshToken['access_token']}"}, data={"grant_type": "authorization_code"}), True)
@@ -470,7 +490,6 @@ def nextrun(loopMinutes): # Salty-Coder :)
     nextrun = now + timedelta(minutes = loopMinutes)
     return "{:4d}/{:02d}/{:02d} {:02d}:{:02d}:{:02d}".format(nextrun.year,nextrun.month,nextrun.day, nextrun.hour,nextrun.minute,nextrun.second)
 
-
 if loopMinutes > 0:
     while True:
         main()
@@ -484,3 +503,4 @@ else: main()
 
 input("Press ENTER to close the program.\n")
 exit()
+ 
