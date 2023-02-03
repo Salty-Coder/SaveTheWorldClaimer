@@ -101,7 +101,7 @@ def validInput(text, values):
         if values == "digit":
             if response.replace(",", ".").replace(".", "").isdigit(): break
         if values == "url": # For Discord webhook | Salty-Coder
-            if response.startswith("https://discord.com/api/webhooks/"): break
+            if response.startswith("https://discord.com/api/webhooks/") or response.startswith("https://canary.discord.com/api/webhooks/"): break
         elif response in values: break
         response = input(getString("validinput.message"))
         print()
